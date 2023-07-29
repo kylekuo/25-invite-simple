@@ -1,0 +1,336 @@
+@use 'normalize.css';
+@use './font/roboto.scss';
+@use './font/tiny.scss';
+@use './halftone.scss';
+
+$breakpoint-desktop: 768px;
+
+*,
+*::before,
+*::after{
+	box-sizing: border-box;
+  position: relative;
+  margin: 0;
+}
+
+:root {
+	--c-gray-100: hsl(210, 10%, 97.5%);
+  --c-gray-500: hsl(210, 5%, 66%);
+	--c-gray-900: hsl(210, 10%, 10%);
+
+	--c-pink-100: hsl(320, 100%, 90%);
+	--c-pink-500: hsl(320, 100%, 50%);
+	--c-pink-900: hsl(320, 100%, 10%);
+
+	--c-blue-100: hsl(210, 100%, 90%);
+	--c-blue-500: hsl(210, 100%, 50%);
+	--c-blue-900: hsl(210, 100%, 10%);
+
+	--c-orange-100: hsl(30, 100%, 90%);
+	--c-orange-500: hsl(30, 100%, 50%);
+	--c-orange-900: hsl(30, 100%, 10%);
+
+	--c-green-100: hsl(120, 100%, 90%);
+	--c-green-500: hsl(120, 100%, 50%);
+	--c-green-900: hsl(120, 100%, 10%);
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	height: 100dvh;
+	height: -webkit-fill-available;
+
+  background-color: var(--c-gray-900);
+  color: var(--c-gray-900);
+  
+  font-family: 'Roboto Flex', sans-serif;
+  --wght: 500;
+  
+  transition: background-color .15s ease-out;
+  
+  &.loaded {
+    background-color: var(--c-orange-500);
+    color: var(--c-gray-100);
+  }
+
+  * {
+    --wght: inherit;
+    font-variation-settings: 'wght' var(--wght);    
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+body {
+  --dot-size: 2px;
+  --dot-gap: 1px;
+	width: 100%;
+	height: 100%;
+}
+
+#app {  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+
+  width: 100%;
+	height: 100%;
+
+  opacity: 0;
+  transition: opacity .15s ease-out;
+  
+  html.loaded & {
+    opacity: 1;
+  }
+}
+
+#bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  mix-blend-mode: saturation;
+  
+  .halftone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: multiply;
+  }
+}
+
+@mixin warp-effect ($size, $c1, $c2, $c3, $c4) {
+
+  color: $c1;
+    
+  text-shadow: 
+    calc( -2 * $size ) calc( -2 * $size ) 0 $c2, 
+    calc( +0 * $size ) calc( -2 * $size ) 0 $c2, 
+    calc( +2 * $size ) calc( -2 * $size ) 0 $c2, 
+    calc( +2 * $size ) calc( +0 * $size ) 0 $c2,
+    calc( +2 * $size ) calc( +2 * $size ) 0 $c2, 
+    calc( +0 * $size ) calc( +2 * $size ) 0 $c2, 
+    calc( -2 * $size ) calc( +2 * $size ) 0 $c2, 
+    calc( -2 * $size ) calc( +0 * $size ) 0 $c2
+    ;
+  
+  filter: 
+    drop-shadow( calc( -1 * $size ) calc( -1 * $size ) 0 $c3 )
+    drop-shadow( calc( +0 * $size ) calc( -1 * $size ) 0 $c3 )
+    drop-shadow( calc( +1 * $size ) calc( -1 * $size ) 0 $c3 )
+    drop-shadow( calc( +1 * $size ) calc( +0 * $size ) 0 $c3 )
+    drop-shadow( calc( +1 * $size ) calc( +1 * $size ) 0 $c3 )
+    drop-shadow( calc( +0 * $size ) calc( +1 * $size ) 0 $c3 )
+    drop-shadow( calc( -1 * $size ) calc( +1 * $size ) 0 $c3 )
+    drop-shadow( calc( -1 * $size ) calc( +0 * $size ) 0 $c3 )
+    
+    drop-shadow( calc( -1.5 * $size ) calc( -1.5 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( +0.0 * $size ) calc( -1.5 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( +1.5 * $size ) calc( -1.5 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( +1.5 * $size ) calc( +0.0 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( +1.5 * $size ) calc( +1.5 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( +0.0 * $size ) calc( +1.5 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( -1.5 * $size ) calc( +1.5 * $size ) calc( +0.5 * $size ) $c4 )
+    drop-shadow( calc( -1.5 * $size ) calc( +0.0 * $size ) calc( +0.5 * $size ) $c4 )
+    ;
+
+}
+
+#warp {
+
+  // 4 LAYERS
+  // 1: COLOR
+  // 2: TEXT-SHADOW
+  // 3: DROP-SHADOW 1
+  // 4: DROP-SHADOW 2
+
+  $s: 5px;
+  $color-0: hsl(210, 5%, 66%);
+  $color-1: hsl(320, 100%, 50%);
+
+  @keyframes warp {
+    
+    // STEPS
+    // 1110
+    // 0111
+    // 1011
+    // 1101
+    // 1110
+  
+    0% {
+
+      @include warp-effect( 
+        $size: $s, 
+        $c1: $color-1, 
+        $c2: $color-1, 
+        $c3: $color-0, 
+        $c4: $color-0 
+      );
+  
+    }
+    
+    25% {
+
+      @include warp-effect( 
+        $size: $s, 
+        $c1: $color-0, 
+        $c2: $color-1, 
+        $c3: $color-1, 
+        $c4: $color-0 
+      );
+  
+    }
+    
+    50% {
+  
+      @include warp-effect( 
+        $size: $s, 
+        $c1: $color-0, 
+        $c2: $color-0, 
+        $c3: $color-1, 
+        $c4: $color-1 
+      );
+  
+    }
+    
+    75% {
+  
+      @include warp-effect( 
+        $size: $s, 
+        $c1: $color-1, 
+        $c2: $color-0, 
+        $c3: $color-0, 
+        $c4: $color-1 
+      );
+  
+    }
+  
+    100% {
+  
+      @include warp-effect( 
+        $size: $s, 
+        $c1: $color-1, 
+        $c2: $color-1, 
+        $c3: $color-0, 
+        $c4: $color-0 
+      );
+  
+    }
+  
+  }
+  
+  margin: 3em;
+  filter: blur(10px);
+  
+  h1 {
+    font-size: 30rem;
+    line-height: 80%;
+    --wght: 200;
+    --text-shadow: 5px;
+    
+    @media screen and (min-width: $breakpoint-desktop) {
+      font-size: 40rem;
+    }
+  
+    @include warp-effect( 
+      $size: 5px, 
+      $c1: $color-1, 
+      $c2: $color-1, 
+      $c3: $color-0, 
+      $c4: $color-0 
+    );
+  
+    margin: 0;
+  
+    animation-name: warp;
+    animation-duration: 1.5s;
+    animation-fill-mode: forwards;
+    animation-direction: normal;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    // animation-play-state: paused;
+  }
+
+}
+
+#info {
+  --group-width: 360px;
+
+  display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 50px;
+
+  padding: 20px;
+
+  font-family: 'Tiny', sans-serif;
+  font-size: 2em;
+  --wght: 80;
+
+  text-shadow: 
+    0 0 50px transparent,
+    0 0 100px transparent,
+    0 0 150px transparent;
+  
+  @media screen and (min-width: $breakpoint-desktop) {
+    font-size: 3em;
+    --wght: 100;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: var(--c-green-500);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 3px;
+    transition: all .15s ease-out;
+    
+    &:hover {
+      color: var(--c-green-500);
+      text-decoration-color: transparent;
+    }
+  }
+
+  .info-group {
+    display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
+    text-align: left;
+		gap: 15px;
+
+		width: min( 10em, 100% );
+		max-width: 100%;
+		overflow: visible;
+
+    & > * {
+			display: inline-block;
+			overflow: visible;
+
+			margin-top: -0.35rem;
+			margin-bottom: -0.25rem;	
+
+			@media (min-width: 768px) {
+				margin-top: -0.85rem;
+				margin-bottom: 0.35rem;
+			}
+		}
+
+    h1, h2 {
+			font-size: 1em;
+      --wght: 120;
+		}
+  }
+}

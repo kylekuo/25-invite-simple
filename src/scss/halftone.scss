@@ -1,0 +1,70 @@
+.halftone {
+  --dot-size: 4px;
+  --dot-gap: 1px;
+  --dot-space: calc(var(--dot-size) + var(--dot-gap));
+
+  background: white;
+  filter: contrast(9999%);
+  overflow: hidden;
+
+	& > * {
+		--offset: 0%;
+	
+		display: block;
+		position: absolute;
+		top: calc(var(--offset) * -1);
+		left: calc(var(--offset) * -1);
+		width: calc(100% + calc(var(--offset) * 2));
+		height: calc(100% + calc(var(--offset) * 2));
+
+		pointer-events: none;
+	}
+
+	& > .contents {
+		display: contents;
+		
+		& > * {
+			pointer-events: all;
+			filter: blur(5px);
+			// filter: brightness(0.5) blur(10px);
+			// filter: brightness(0.5) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><filter id='sharpBlur'><feGaussianBlur stdDeviation='5'></feGaussianBlur><feColorMatrix type='matrix' values='1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 9 0'></feColorMatrix><feComposite in2='SourceGraphic' operator='in'></feComposite></filter></svg>#sharpBlur");
+		}
+	}
+
+	& > .layers {
+		--dot-screen-scale: 1;
+		mix-blend-mode: screen;
+		pointer-events: none;
+
+		& > .layer {
+			--color: magenta;
+			--dot-offset-angle: 0;
+			--dot-offset-x: 0 !important;
+			--dot-offset-y: 0 !important;
+		
+			display: block;
+		
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: calc(100% * var(--dot-screen-scale));
+			height: calc(100% * var(--dot-screen-scale));
+			transform-origin: center center;
+			transform: translate(-50%, -50%) rotate( calc(-1deg * var(--dot-offset-angle)) );
+		
+			background:
+				radial-gradient(var(--dot-size) var(--dot-size), var(--color), white);
+		
+			background-position: 
+				calc(var(--dot-space) * var(--dot-offset-x)) calc(var(--dot-space) * var(--dot-offset-y));
+			
+			background-size: var(--dot-space) var(--dot-space);
+		
+			mix-blend-mode: multiply;
+		
+			z-index: 1;
+		}
+	}
+}
+
+
